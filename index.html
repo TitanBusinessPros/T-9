@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital SOP/Checklist Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 32px;
+            color: #3498db;
+            margin-right: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            color: #2c3e50;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #219653;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #3498db;
+            color: #3498db;
+        }
+        
+        .btn-outline:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 18px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            flex: 1;
+            border-bottom: 4px solid transparent;
+        }
+        
+        .tab:hover {
+            background: #f8f9fa;
+        }
+        
+        .tab.active {
+            border-bottom: 4px solid #3498db;
+            color: #3498db;
+            background: #f8f9fa;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .steps-container {
+            margin-top: 30px;
+        }
+        
+        .step {
+            background: #ecf0f1;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        
+        .step-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .step-actions button {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        
+        .icon-selector {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .icon-option {
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        
+        .icon-option:hover {
+            border-color: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .icon-option.selected {
+            border-color: #3498db;
+            background-color: #e6f0ff;
+            color: #3498db;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .checklist-item:hover {
+            border-color: #3498db;
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checklist-item-content {
+            flex: 1;
+        }
+        
+        .checklist-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            width: 100%;
+        }
+        
+        .checklist-item-desc {
+            color: #7f8c8d;
+            font-size: 14px;
+            width: 100%;
+        }
+        
+        .export-preview {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            text-align: center;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        
+        .preview-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            max-width: 100%;
+            overflow-wrap: break-word;
+        }
+        
+        .preview-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        
+        .preview-desc {
+            color: #7f8c8d;
+            font-size: 18px;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        
+        .preview-step {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            text-align: left;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        
+        .preview-step:last-child {
+            border-bottom: none;
+        }
+        
+        .step-icon {
+            margin-right: 15px;
+            color: #3498db;
+            font-size: 24px;
+        }
+        
+        .export-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .checklist-preview {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 100%;
+            overflow-wrap: break-word;
+        }
+        
+        .checklist-preview-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+        
+        .checklist-preview-item:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist-preview-item input[type="checkbox"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .checklist-item-content input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .icon-selector {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .export-actions {
+                flex-direction: column;
+            }
+            
+            .preview-title {
+                font-size: 24px;
+            }
+            
+            .preview-desc {
+                font-size: 16px;
+            }
+            
+            .step-icon {
+                font-size: 20px;
+            }
+            
+            .export-preview {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-tasks"></i>
+                <h1>Digital SOP/Checklist Manager</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="new-document">
+                    <i class="fas fa-plus"></i> New
+                </button>
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-target="sop-creator">SOP Creator</div>
+            <div class="tab" data-target="checklist-creator">Checklist Creator</div>
+            <div class="tab" data-target="export">Export</div>
+        </div>
+        
+        <!-- SOP Creator Section -->
+        <div id="sop-creator" class="content-section">
+            <h2 class="section-title">Create Standard Operating Procedure</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" id="sop-title" placeholder="Enter SOP title">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" id="sop-description" placeholder="Enter SOP description"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <input type="text" class="form-control" id="sop-category" placeholder="e.g., Safety, Operations, Quality">
+            </div>
+            
+            <div class="steps-container">
+                <div class="form-group">
+                    <label class="form-label">Procedure Steps</label>
+                    <button class="btn btn-outline" id="add-step">
+                        <i class="fas fa-plus"></i> Add Step
+                    </button>
+                </div>
+                
+                <div id="steps-container">
+                    <!-- Steps will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Checklist Creator Section -->
+        <div id="checklist-creator" class="content-section" style="display: none;">
+            <h2 class="section-title">Create Daily Checklist</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Checklist Title</label>
+                <input type="text" class="form-control" id="checklist-title" placeholder="Enter checklist title">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" id="checklist-description" placeholder="Enter checklist description"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <input type="text" class="form-control" id="checklist-category" placeholder="e.g., Daily, Weekly, Maintenance">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Checklist Items</label>
+                <button class="btn btn-outline" id="add-checklist-item">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            </div>
+            
+            <div id="checklist-items-container">
+                <!-- Checklist items will be added here dynamically -->
+            </div>
+        </div>
+        
+        <!-- Export Section -->
+        <div id="export" class="content-section" style="display: none;">
+            <h2 class="section-title">Export Document</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Select Document Type</label>
+                <select class="form-control" id="export-type">
+                    <option value="sop">Standard Operating Procedure</option>
+                    <option value="checklist">Checklist</option>
+                </select>
+            </div>
+            
+            <div id="export-preview">
+                <!-- Export preview will be shown here -->
+            </div>
+            
+            <div class="export-actions">
+                <button class="btn btn-primary" id="export-html">
+                    <i class="fas fa-code"></i> Export as HTML
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation tabs
+            const tabs = document.querySelectorAll('.tab');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target section
+                    contentSections.forEach(section => {
+                        section.style.display = section.id === target ? 'block' : 'none';
+                    });
+                    
+                    // If export tab is clicked, generate preview
+                    if (target === 'export') {
+                        generateExportPreview();
+                    }
+                });
+            });
+            
+            // SOP functionality
+            const addStepBtn = document.getElementById('add-step');
+            const stepsContainer = document.getElementById('steps-container');
+            
+            addStepBtn.addEventListener('click', function() {
+                const stepCount = stepsContainer.children.length + 1;
+                const stepElement = document.createElement('div');
+                stepElement.className = 'step';
+                stepElement.innerHTML = `
+                    <div class="step-header">
+                        <div class="step-title">Step ${stepCount}</div>
+                        <div class="step-actions">
+                            <button class="btn btn-outline move-up"><i class="fas fa-arrow-up"></i></button>
+                            <button class="btn btn-outline move-down"><i class="fas fa-arrow-down"></i></button>
+                            <button class="btn btn-outline remove-step"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control step-title-input" placeholder="Enter step title">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control step-description-input" placeholder="Enter step description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Icon</label>
+                        <div class="icon-selector">
+                            <div class="icon-option" data-icon="fas fa-info-circle"><i class="fas fa-info-circle"></i></div>
+                            <div class="icon-option" data-icon="fas fa-exclamation-triangle"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div class="icon-option" data-icon="fas fa-check-circle"><i class="fas fa-check-circle"></i></div>
+                            <div class="icon-option" data-icon="fas fa-ban"><i class="fas fa-ban"></i></div>
+                            <div class="icon-option" data-icon="fas fa-clock"><i class="fas fa-clock"></i></div>
+                            <div class="icon-option" data-icon="fas fa-cog"><i class="fas fa-cog"></i></div>
+                            <div class="icon-option" data-icon="fas fa-bolt"><i class="fas fa-bolt"></i></div>
+                            <div class="icon-option" data-icon="fas fa-flask"><i class="fas fa-flask"></i></div>
+                            <div class="icon-option" data-icon="fas fa-tools"><i class="fas fa-tools"></i></div>
+                            <div class="icon-option" data-icon="fas fa-user-shield"><i class="fas fa-user-shield"></i></div>
+                            <div class="icon-option" data-icon="fas fa-hard-hat"><i class="fas fa-hard-hat"></i></div>
+                            <div class="icon-option" data-icon="fas fa-gloves"><i class="fas fa-gloves"></i></div>
+                            <div class="icon-option" data-icon="fas fa-eye"><i class="fas fa-eye"></i></div>
+                            <div class="icon-option" data-icon="fas fa-hands"><i class="fas fa-hands"></i></div>
+                            <div class="icon-option" data-icon="fas fa-filter"><i class="fas fa-filter"></i></div>
+                            <div class="icon-option" data-icon="fas fa-temperature-high"><i class="fas fa-temperature-high"></i></div>
+                            <div class="icon-option" data-icon="fas fa-weight-hanging"><i class="fas fa-weight-hanging"></i></div>
+                            <div class="icon-option" data-icon="fas fa-ruler"><i class="fas fa-ruler"></i></div>
+                            <div class="icon-option" data-icon="fas fa-tachometer-alt"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="icon-option" data-icon="fas fa-broom"><i class="fas fa-broom"></i></div>
+                            <div class="icon-option" data-icon="fas fa-soap"><i class="fas fa-soap"></i></div>
+                            <div class="icon-option" data-icon="fas fa-pump-soap"><i class="fas fa-pump-soap"></i></div>
+                            <div class="icon-option" data-icon="fas fa-box"><i class="fas fa-box"></i></div>
+                        </div>
+                        <input type="hidden" class="step-icon-input" value="fas fa-info-circle">
+                    </div>
+                `;
+                
+                stepsContainer.appendChild(stepElement);
+                
+                // Add event listeners for the new step
+                const moveUpBtn = stepElement.querySelector('.move-up');
+                const moveDownBtn = stepElement.querySelector('.move-down');
+                const removeBtn = stepElement.querySelector('.remove-step');
+                const iconOptions = stepElement.querySelectorAll('.icon-option');
+                
+                moveUpBtn.addEventListener('click', function() {
+                    const prev = stepElement.previousElementSibling;
+                    if (prev) {
+                        stepsContainer.insertBefore(stepElement, prev);
+                        updateStepNumbers();
+                    }
+                });
+                
+                moveDownBtn.addEventListener('click', function() {
+                    const next = stepElement.nextElementSibling;
+                    if (next) {
+                        stepsContainer.insertBefore(next, stepElement);
+                        updateStepNumbers();
+                    }
+                });
+                
+                removeBtn.addEventListener('click', function() {
+                    stepElement.remove();
+                    updateStepNumbers();
+                });
+                
+                iconOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        const icon = this.getAttribute('data-icon');
+                        stepElement.querySelector('.step-icon-input').value = icon;
+                        
+                        // Update selection UI
+                        iconOptions.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                    });
+                });
+                
+                // Select first icon by default
+                iconOptions[0].classList.add('selected');
+                
+                updateStepNumbers();
+            });
+            
+            function updateStepNumbers() {
+                const steps = stepsContainer.querySelectorAll('.step');
+                steps.forEach((step, index) => {
+                    step.querySelector('.step-title').textContent = `Step ${index + 1}`;
+                });
+            }
+            
+            // Checklist functionality
+            const addChecklistItemBtn = document.getElementById('add-checklist-item');
+            const checklistItemsContainer = document.getElementById('checklist-items-container');
+            
+            addChecklistItemBtn.addEventListener('click', function() {
+                const itemCount = checklistItemsContainer.children.length + 1;
+                const itemElement = document.createElement('div');
+                itemElement.className = 'checklist-item';
+                itemElement.innerHTML = `
+                    <input type="checkbox">
+                    <div class="checklist-item-content">
+                        <input type="text" class="checklist-item-title" placeholder="Item title" value="Item ${itemCount}">
+                        <input type="text" class="checklist-item-desc" placeholder="Item description" value="Description of the item">
+                    </div>
+                    <button class="btn btn-outline remove-item"><i class="fas fa-trash"></i></button>
+                `;
+                
+                checklistItemsContainer.appendChild(itemElement);
+                
+                // Add event listener for remove button
+                const removeBtn = itemElement.querySelector('.remove-item');
+                removeBtn.addEventListener('click', function() {
+                    itemElement.remove();
+                });
+            });
+            
+            // Export functionality
+            const exportHtmlBtn = document.getElementById('export-html');
+            const exportPreview = document.getElementById('export-preview');
+            const exportType = document.getElementById('export-type');
+            
+            function generateExportPreview() {
+                const type = exportType.value;
+                
+                if (type === 'sop') {
+                    const title = document.getElementById('sop-title').value || 'Standard Operating Procedure';
+                    const description = document.getElementById('sop-description').value || 'Description of the procedure';
+                    const category = document.getElementById('sop-category').value || 'General';
+                    
+                    let stepsHtml = '';
+                    const steps = stepsContainer.querySelectorAll('.step');
+                    
+                    steps.forEach(step => {
+                        const stepTitle = step.querySelector('.step-title-input').value || 'Step';
+                        const stepDesc = step.querySelector('.step-description-input').value || 'Step description';
+                        const stepIcon = step.querySelector('.step-icon-input').value || 'fas fa-info-circle';
+                        
+                        stepsHtml += `
+                            <div class="preview-step">
+                                <h3><i class="${stepIcon} step-icon"></i> ${stepTitle}</h3>
+                                <p>${stepDesc}</p>
+                            </div>
+                        `;
+                    });
+                    
+                    exportPreview.innerHTML = `
+                        <div class="export-preview" id="sop-preview">
+                            <div class="preview-header">
+                                <h2 class="preview-title">${title}</h2>
+                                <p class="preview-desc">${description}</p>
+                                <p><strong>Category:</strong> ${category}</p>
+                            </div>
+                            ${stepsHtml}
+                        </div>
+                    `;
+                } else {
+                    const title = document.getElementById('checklist-title').value || 'Daily Checklist';
+                    const description = document.getElementById('checklist-description').value || 'Description of the checklist';
+                    const category = document.getElementById('checklist-category').value || 'Daily';
+                    
+                    let itemsHtml = '';
+                    const items = checklistItemsContainer.querySelectorAll('.checklist-item');
+                    
+                    items.forEach(item => {
+                        const itemTitle = item.querySelector('.checklist-item-title').value || 'Item';
+                        const itemDesc = item.querySelector('.checklist-item-desc').value || 'Item description';
+                        
+                        itemsHtml += `
+                            <div class="checklist-preview-item">
+                                <input type="checkbox">
+                                <div class="checklist-item-content">
+                                    <div class="checklist-item-title">${itemTitle}</div>
+                                    <div class="checklist-item-desc">${itemDesc}</div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    exportPreview.innerHTML = `
+                        <div class="export-preview" id="checklist-preview">
+                            <div class="preview-header">
+                                <h2 class="preview-title">${title}</h2>
+                                <p class="preview-desc">${description}</p>
+                                <p><strong>Category:</strong> ${category}</p>
+                            </div>
+                            <div class="checklist-preview">
+                                ${itemsHtml}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            exportType.addEventListener('change', generateExportPreview);
+            
+            exportHtmlBtn.addEventListener('click', function() {
+                const type = exportType.value;
+                const previewElement = document.getElementById(type + '-preview');
+                
+                if (!previewElement) {
+                    alert('Please generate a document first');
+                    return;
+                }
+                
+                // Create HTML content with proper styling for export
+                const htmlContent = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>${type === 'sop' ? 'SOP' : 'Checklist'} Export</title>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                        <style>
+                            body {
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                color: #2c3e50;
+                                line-height: 1.6;
+                                padding: 20px;
+                                max-width: 100%;
+                                margin: 0 auto;
+                                box-sizing: border-box;
+                            }
+                            .export-preview {
+                                background: white;
+                                padding: 30px;
+                                border-radius: 12px;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                text-align: center;
+                                max-width: 100%;
+                                overflow-wrap: break-word;
+                                word-wrap: break-word;
+                                margin: 0 auto;
+                            }
+                            .preview-header {
+                                text-align: center;
+                                margin-bottom: 30px;
+                                padding-bottom: 15px;
+                                border-bottom: 2px solid #ecf0f1;
+                                max-width: 100%;
+                                overflow-wrap: break-word;
+                            }
+                            .preview-title {
+                                font-size: 24px;
+                                color: #2c3e50;
+                                margin-bottom: 10px;
+                                overflow-wrap: break-word;
+                                word-wrap: break-word;
+                            }
+                            .preview-desc {
+                                color: #7f8c8d;
+                                font-size: 16px;
+                                overflow-wrap: break-word;
+                                word-wrap: break-word;
+                            }
+                            .preview-step {
+                                margin-bottom: 20px;
+                                padding-bottom: 15px;
+                                border-bottom: 1px solid #ecf0f1;
+                                text-align: left;
+                                max-width: 100%;
+                                overflow-wrap: break-word;
+                                word-wrap: break-word;
+                            }
+                            .preview-step:last-child {
+                                border-bottom: none;
+                            }
+                            .step-icon {
+                                margin-right: 10px;
+                                color: #3498db;
+                                font-size: 20px;
+                            }
+                            .checklist-preview {
+                                margin-top: 20px;
+                                text-align: left;
+                                max-width: 100%;
+                                overflow-wrap: break-word;
+                            }
+                            .checklist-preview-item {
+                                display: flex;
+                                align-items: flex-start;
+                                padding: 12px;
+                                border-bottom: 1px solid #ecf0f1;
+                                max-width: 100%;
+                                overflow-wrap: break-word;
+                                word-wrap: break-word;
+                            }
+                            .checklist-preview-item:last-child {
+                                border-bottom: none;
+                            }
+                            .checklist-preview-item input[type="checkbox"] {
+                                margin-right: 12px;
+                                width: 18px;
+                                height: 18px;
+                                flex-shrink: 0;
+                                margin-top: 3px;
+                            }
+                            .checklist-item-content {
+                                flex: 1;
+                                min-width: 0;
+                            }
+                            .checklist-item-title {
+                                font-weight: 600;
+                                margin-bottom: 5px;
+                                overflow-wrap: break-word;
+                                word-wrap: break-word;
+                            }
+                            .checklist-item-desc {
+                                color: #7f8c8d;
+                                font-size: 14px;
+                                overflow-wrap: break-word;
+                                word-wrap: break-word;
+                            }
+                            @media (max-width: 768px) {
+                                body {
+                                    padding: 15px;
+                                }
+                                .export-preview {
+                                    padding: 20px;
+                                }
+                                .preview-title {
+                                    font-size: 22px;
+                                }
+                                .preview-desc {
+                                    font-size: 15px;
+                                }
+                                .step-icon {
+                                    font-size: 18px;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${previewElement.outerHTML}
+                    </body>
+                    </html>
+                `;
+                
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = (type === 'sop' ? 'sop' : 'checklist') + '.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            // New document functionality
+            const newDocumentBtn = document.getElementById('new-document');
+            
+            newDocumentBtn.addEventListener('click', function() {
+                // Clear all form fields
+                document.getElementById('sop-title').value = '';
+                document.getElementById('sop-description').value = '';
+                document.getElementById('sop-category').value = '';
+                stepsContainer.innerHTML = '';
+                
+                document.getElementById('checklist-title').value = '';
+                document.getElementById('checklist-description').value = '';
+                document.getElementById('checklist-category').value = '';
+                checklistItemsContainer.innerHTML = '';
+                
+                // Add one step and one checklist item by default
+                addStepBtn.click();
+                addChecklistItemBtn.click();
+                
+                // Switch to SOP creator tab
+                document.querySelector('.tab[data-target="sop-creator"]').click();
+            });
+            
+            // Initialize with one step and one checklist item
+            addStepBtn.click();
+            addChecklistItemBtn.click();
+        });
+    </script>
+</body>
+</html>
